@@ -81,7 +81,7 @@ export function NotesSidebar({
             placeholder="메모 검색"
             value={query}
             onChange={e => setQuery(e.target.value)}
-            className="w-full pl-8 pr-3 py-1.5 text-sm rounded-md bg-white/60 dark:bg-zinc-700/60 border border-note-border dark:border-zinc-600 placeholder:text-stone-400 dark:placeholder:text-zinc-500 focus:outline-none focus:ring-1 focus:ring-amber-400 tracking-korean"
+            className="w-full pl-8 pr-3 py-1.5 text-[15px] md:text-sm rounded-md bg-white/60 dark:bg-zinc-700/60 border border-note-border dark:border-zinc-600 placeholder:text-stone-400 dark:placeholder:text-zinc-500 focus:outline-none focus:ring-1 focus:ring-amber-400 tracking-korean"
           />
           {query && (
             <button
@@ -162,15 +162,15 @@ function NoteItem({
             : 'hover:bg-white/50 dark:hover:bg-zinc-700/50'
         }`}
       >
-        <p className="text-sm font-medium text-stone-800 dark:text-zinc-100 truncate tracking-korean leading-snug">
+        <p className="text-[15px] md:text-sm font-medium text-stone-800 dark:text-zinc-100 truncate tracking-korean leading-snug">
           {title}
         </p>
         <div className="flex items-baseline gap-1.5 mt-0.5">
-          <span className="text-xs text-stone-400 dark:text-zinc-500 shrink-0">
+          <span className="text-[13px] md:text-xs text-stone-400 dark:text-zinc-500 shrink-0">
             {formatDate(note.updated_at)}
           </span>
           {preview && (
-            <span className="text-xs text-stone-500 dark:text-zinc-400 truncate tracking-korean">
+            <span className="text-[13px] md:text-xs text-stone-500 dark:text-zinc-400 truncate tracking-korean">
               {preview}
             </span>
           )}

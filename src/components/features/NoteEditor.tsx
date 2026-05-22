@@ -15,11 +15,46 @@ interface NoteEditorProps {
   onBack?: () => void
 }
 
+const URL_REGEX = /https?:\/\/[-A-Za-z0-9+&@#/%?=~_|!:,.;]*[-A-Za-z0-9+&@#/%=~_|]/g
+
+function renderWithLinks(text: string) {
+  const parts: React.ReactNode[] = []
+  let lastIndex = 0
+  let match: RegExpExecArray | null
+  const regex = new RegExp(URL_REGEX.source, 'g')
+
+  while ((match = regex.exec(text)) !== null) {
+    if (match.index > lastIndex) {
+      parts.push(text.slice(lastIndex, match.index))
+    }
+    parts.push(
+      <a
+        key={match.index}
+        href={match[0]}
+        target="_blank"
+        rel="noopener noreferrer"
+        className="text-blue-500 underline break-all"
+        onClick={e => e.stopPropagation()}
+      >
+        {match[0]}
+      </a>
+    )
+    lastIndex = regex.lastIndex
+  }
+
+  if (lastIndex < text.length) {
+    parts.push(text.slice(lastIndex))
+  }
+
+  return parts
+}
+
 export function NoteEditor({ note, userId, onUpdate, onDelete, onBack }: NoteEditorProps) {
   const [title, setTitle] = useState('')
   const [content, setContent] = useState('')
   const [attachments, setAttachments] = useState<Attachment[]>([])
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false)
+  const [isEditingContent, setIsEditingContent] = useState(false)
   const contentRef = useRef<HTMLTextAreaElement>(null)
 
   const { saveStatusText } = useAutoSave({
@@ -40,7 +75,15 @@ export function NoteEditor({ note, userId, onUpdate, onDelete, onBack }: NoteEdi
       setContent('')
       setAttachments([])
     }
+    setIsEditingContent(false)
   }, [note?.id, note?.title, note?.content]) // eslint-disable-line react-hooks/exhaustive-deps
+
+  // Focus textarea when switching to edit mode
+  useEffect(() => {
+    if (isEditingContent) {
+      setTimeout(() => contentRef.current?.focus(), 0)
+    }
+  }, [isEditingContent])
 
   // Auto-resize textarea
   const resizeTextarea = useCallback(() => {
@@ -88,7 +131,6 @@ export function NoteEditor({ note, userId, onUpdate, onDelete, onBack }: NoteEdi
     <div className="flex-1 flex flex-col bg-white dark:bg-zinc-900 overflow-hidden">
       {/* Toolbar */}
       <div className="flex items-center gap-2 px-4 py-2.5 border-b border-note-border dark:border-zinc-700">
-        {/* Back button (mobile only) */}
         {onBack && (
           <button
             onClick={onBack}
@@ -101,18 +143,15 @@ export function NoteEditor({ note, userId, onUpdate, onDelete, onBack }: NoteEdi
         )}
 
         <div className="flex-1 flex items-center gap-2">
-          {/* Save status */}
           <span className="text-xs text-stone-400 dark:text-zinc-500 tracking-korean">
             {saveStatusText}
           </span>
         </div>
 
-        {/* Date */}
         <span className="text-xs text-stone-400 dark:text-zinc-500 tracking-korean">
           {formatDate(note.updated_at)}
         </span>
 
-        {/* Delete */}
         <div className="relative">
           <button
             onClick={() => setShowDeleteConfirm(true)}
@@ -157,17 +196,30 @@ export function NoteEditor({ note, userId, onUpdate, onDelete, onBack }: NoteEdi
           value={title}
           onChange={e => setTitle(e.target.value)}
           placeholder="제목"
-          className="w-full text-2xl font-bold text-stone-900 dark:text-zinc-100 bg-transparent border-none outline-none placeholder:text-stone-300 dark:placeholder:text-zinc-600 tracking-korean leading-snug mb-3"
+          className="w-full text-[22px] md:text-2xl font-bold text-stone-900 dark:text-zinc-100 bg-transparent border-none outline-none placeholder:text-stone-300 dark:placeholder:text-zinc-600 tracking-korean leading-snug mb-3"
         />
 
-        {/* Content */}
-        <textarea
-          ref={contentRef}
-          value={content}
-          onChange={e => { setContent(e.target.value); resizeTextarea() }}
-          placeholder="내용을 입력하세요..."
-          className="w-full min-h-[200px] text-[15px] text-stone-800 dark:text-zinc-200 bg-transparent border-none outline-none resize-none placeholder:text-stone-300 dark:placeholder:text-zinc-600 tracking-korean leading-korean"
-        />
+        {/* Content: textarea when editing, rendered view otherwise */}
+        {isEditingContent ? (
+          <textarea
+            ref={contentRef}
+            value={content}
+            onChange={e => { setContent(e.target.value); resizeTextarea() }}
+            onBlur={() => setIsEditingContent(false)}
+            placeholder="내용을 입력하세요..."
+            className="w-full min-h-[200px] text-[17px] md:text-[15px] text-stone-800 dark:text-zinc-200 bg-transparent border-none outline-none resize-none placeholder:text-stone-300 dark:placeholder:text-zinc-600 tracking-korean leading-korean"
+          />
+        ) : (
+          <div
+            onClick={() => setIsEditingContent(true)}
+            className="w-full min-h-[200px] text-[17px] md:text-[15px] text-stone-800 dark:text-zinc-200 tracking-korean leading-korean whitespace-pre-wrap break-words cursor-text"
+          >
+            {content
+              ? renderWithLinks(content)
+              : <span className="text-stone-300 dark:text-zinc-600">내용을 입력하세요...</span>
+            }
+          </div>
+        )}
 
         {/* File attachments */}
         <FileUpload
