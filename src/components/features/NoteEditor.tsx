@@ -29,18 +29,18 @@ export function NoteEditor({ note, userId, onUpdate, onDelete, onBack }: NoteEdi
     onSave: onUpdate,
   })
 
-  // Sync editor when selected note changes
+  // Sync editor when selected note changes or receives external updates
   useEffect(() => {
     if (note) {
-      setTitle(note.title)
-      setContent(note.content)
+      setTitle(prev => prev !== note.title ? note.title : prev)
+      setContent(prev => prev !== note.content ? note.content : prev)
       setAttachments(note.attachments || [])
     } else {
       setTitle('')
       setContent('')
       setAttachments([])
     }
-  }, [note?.id]) // eslint-disable-line react-hooks/exhaustive-deps
+  }, [note?.id, note?.title, note?.content]) // eslint-disable-line react-hooks/exhaustive-deps
 
   // Auto-resize textarea
   const resizeTextarea = useCallback(() => {

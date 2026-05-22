@@ -15,20 +15,21 @@ export default function NotesPage() {
   const { isDark, setTheme, theme } = useTheme()
   const router = useRouter()
 
-  const [selectedNote, setSelectedNote] = useState<Note | null>(null)
+  const [selectedNoteId, setSelectedNoteId] = useState<string | null>(null)
+  const selectedNote = notes.find(n => n.id === selectedNoteId) ?? null
   // Mobile: 'list' shows sidebar, 'editor' shows editor
   const [mobileView, setMobileView] = useState<'list' | 'editor'>('list')
 
   const handleCreate = useCallback(async () => {
     const note = await createNote()
     if (note) {
-      setSelectedNote(note)
+      setSelectedNoteId(note.id)
       setMobileView('editor')
     }
   }, [createNote])
 
   const handleSelect = useCallback((note: Note) => {
-    setSelectedNote(note)
+    setSelectedNoteId(note.id)
     setMobileView('editor')
   }, [])
 
@@ -38,7 +39,7 @@ export default function NotesPage() {
 
   const handleDelete = useCallback(async (id: string) => {
     await deleteNote(id)
-    setSelectedNote(null)
+    setSelectedNoteId(null)
     setMobileView('list')
   }, [deleteNote])
 

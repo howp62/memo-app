@@ -33,3 +33,4 @@ tsconfig.tsbuildinfo
 # bkit 내부 데이터
 .bkit/
 .claude/
+public/swe-worker-*.js
