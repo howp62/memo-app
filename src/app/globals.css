@@ -1,0 +1,65 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  /* Korean typography optimizations */
+  html {
+    word-break: keep-all;
+    overflow-wrap: break-word;
+  }
+
+  body {
+    @apply bg-note-bg dark:bg-zinc-900 text-stone-900 dark:text-zinc-100;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+  }
+
+  /* Scrollbar styling */
+  ::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+
+  ::-webkit-scrollbar-track {
+    @apply bg-transparent;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    @apply bg-stone-200 dark:bg-zinc-600 rounded-full;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    @apply bg-stone-300 dark:bg-zinc-500;
+  }
+
+  /* Remove default textarea resize */
+  textarea {
+    resize: none;
+  }
+
+  /* Better tap highlight on mobile */
+  * {
+    -webkit-tap-highlight-color: transparent;
+  }
+}
+
+@layer utilities {
+  .tracking-korean {
+    letter-spacing: -0.01em;
+  }
+
+  .leading-korean {
+    line-height: 1.75;
+  }
+
+  /* Safe area for iOS */
+  .safe-bottom {
+    padding-bottom: env(safe-area-inset-bottom);
+  }
+
+  .safe-top {
+    padding-top: env(safe-area-inset-top);
+  }
+}

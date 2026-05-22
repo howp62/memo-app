@@ -1,0 +1,35 @@
+# dependencies
+node_modules/
+.pnp
+.pnp.js
+
+# production
+.next/
+out/
+
+# env files — 절대 커밋하지 마세요
+.env
+.env.local
+.env.*.local
+
+# vercel
+.vercel
+
+# PWA (빌드 시 자동 생성)
+public/sw.js
+public/sw.js.map
+public/workbox-*.js
+public/workbox-*.js.map
+public/worker-*.js
+public/swe-worker-*.js
+
+# misc
+.DS_Store
+._*
+*.pem
+npm-debug.log*
+tsconfig.tsbuildinfo
+
+# bkit 내부 데이터
+.bkit/
+.claude/
