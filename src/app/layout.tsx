@@ -19,6 +19,11 @@ export const metadata: Metadata = {
     capable: true,
     statusBarStyle: 'default',
     title: '메모',
+    startupImage: '/icons/icon-512.png',
+  },
+  icons: {
+    apple: '/icons/icon-192.png',
+    icon: '/icons/icon-512.png',
   },
   formatDetection: {
     telephone: false,
