@@ -12,13 +12,13 @@ const notoSansKr = Noto_Sans_KR({
 })
 
 export const metadata: Metadata = {
-  title: '메모',
+  title: 'howpmemo',
   description: '간단하고 빠른 메모 앱',
   manifest: '/manifest.json',
   appleWebApp: {
     capable: true,
     statusBarStyle: 'default',
-    title: '메모',
+    title: 'howpmemo',
     startupImage: '/icons/icon-512.png',
   },
   icons: {

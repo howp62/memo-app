@@ -58,14 +58,14 @@ export default function LoginPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-note-bg dark:bg-zinc-900">
+      <div className="min-h-screen flex items-center justify-center bg-note-sidebar dark:bg-zinc-900">
         <div className="w-8 h-8 border-2 border-[#244F9A] border-t-transparent rounded-full animate-spin" />
       </div>
     )
   }
 
   return (
-    <main className="min-h-screen flex items-center justify-center bg-note-bg dark:bg-zinc-900 px-4">
+    <main className="min-h-screen flex items-center justify-center bg-note-sidebar dark:bg-zinc-900 px-4">
       <div className="w-full max-w-sm">
         {/* Logo */}
         <div className="text-center mb-8">
@@ -76,7 +76,7 @@ export default function LoginPage() {
             </svg>
           </div>
           <h1 className="text-2xl font-bold text-stone-900 dark:text-zinc-100 tracking-korean">
-            메모
+            howpmemo
           </h1>
           <p className="text-sm text-stone-500 dark:text-zinc-400 mt-1 tracking-korean">
             간단하고 빠른 메모 앱
@@ -86,7 +86,7 @@ export default function LoginPage() {
         {/* Card */}
         <div className="bg-white dark:bg-zinc-800 rounded-2xl shadow-sm border border-note-border dark:border-zinc-700 p-6">
           {/* Tab switcher */}
-          <div className="flex gap-1 bg-stone-100 dark:bg-zinc-700/50 rounded-lg p-1 mb-5">
+          <div className="flex gap-1 bg-note-active dark:bg-zinc-700/50 rounded-lg p-1 mb-5">
             {(['login', 'signup'] as const).map(tab => (
               <button
                 key={tab}

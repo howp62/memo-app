@@ -202,7 +202,7 @@ export default function SettingsPage() {
 
         {/* App info */}
         <p className="text-center text-xs text-stone-300 dark:text-zinc-600 tracking-korean">
-          메모 앱 v0.1.0
+          howpmemo v0.1.0
         </p>
       </div>
     </div>
