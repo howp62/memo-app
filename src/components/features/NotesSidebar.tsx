@@ -83,7 +83,7 @@ export function NotesSidebar({
             placeholder="메모 검색"
             value={query}
             onChange={e => setQuery(e.target.value)}
-            className="w-full pl-8 pr-3 py-1.5 text-[15px] md:text-sm rounded-md bg-white/60 dark:bg-zinc-700/60 border border-note-border dark:border-zinc-600 placeholder:text-stone-400 dark:placeholder:text-zinc-500 focus:outline-none focus:ring-1 focus:ring-amber-400 tracking-korean"
+            className="w-full pl-8 pr-3 py-1.5 text-[15px] md:text-sm rounded-md bg-white/60 dark:bg-zinc-700/60 border border-note-border dark:border-zinc-600 placeholder:text-stone-400 dark:placeholder:text-zinc-500 focus:outline-none focus:ring-1 focus:ring-[#244F9A] tracking-korean"
           />
           {query && (
             <button
@@ -109,7 +109,7 @@ export function NotesSidebar({
       <div className="flex-1 overflow-y-auto">
         {loading ? (
           <div className="flex justify-center py-8">
-            <Spinner className="w-5 h-5 text-amber-400" />
+            <Spinner className="w-5 h-5 text-[#244F9A]" />
           </div>
         ) : displayNotes.length === 0 ? (
           <div className="px-3 py-8 text-center">
@@ -119,7 +119,7 @@ export function NotesSidebar({
             {!query && (
               <button
                 onClick={onCreate}
-                className="mt-2 text-sm text-amber-600 hover:text-amber-700 tracking-korean"
+                className="mt-2 text-sm text-[#244F9A] hover:text-[#1A3B74] tracking-korean"
               >
                 새 메모 만들기
               </button>
@@ -231,7 +231,7 @@ function NoteItem({
           transition: 'transform 0.22s ease',
         }}
         className={`flex items-stretch bg-white dark:bg-zinc-900 border-b border-note-border/50 dark:border-zinc-700/50 ${
-          isSelected ? 'border-l-2 border-l-note-active-border bg-note-active dark:bg-amber-900/30' : ''
+          isSelected ? 'border-l-2 border-l-note-active-border bg-note-active dark:bg-blue-900/30' : ''
         }`}
       >
         {/* Main tap area */}

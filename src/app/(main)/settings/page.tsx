@@ -108,7 +108,7 @@ export default function SettingsPage() {
                   onClick={() => setTheme(t)}
                   className={`py-2 text-sm rounded-lg border transition-colors tracking-korean ${
                     theme === t
-                      ? 'bg-amber-400 border-amber-400 text-stone-900 font-medium'
+                      ? 'bg-[#244F9A] border-[#244F9A] text-white font-medium'
                       : 'border-note-border dark:border-zinc-600 text-stone-600 dark:text-zinc-300 hover:bg-stone-50 dark:hover:bg-zinc-700'
                   }`}
                 >

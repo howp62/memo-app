@@ -16,7 +16,7 @@ export default function MainLayout({ children }: { children: React.ReactNode }) 
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-note-bg dark:bg-zinc-900">
-        <Spinner className="w-7 h-7 text-amber-400" />
+        <Spinner className="w-7 h-7 text-[#244F9A]" />
       </div>
     )
   }

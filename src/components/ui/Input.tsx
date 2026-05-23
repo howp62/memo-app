@@ -22,7 +22,7 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
             border-stone-200 dark:border-zinc-600
             text-stone-900 dark:text-zinc-100
             placeholder:text-stone-400 dark:placeholder:text-zinc-500
-            focus:outline-none focus:ring-2 focus:ring-amber-400 focus:border-transparent
+            focus:outline-none focus:ring-2 focus:ring-[#244F9A] focus:border-transparent
             transition-colors
             ${error ? 'border-red-400 focus:ring-red-400' : ''}
             ${className}

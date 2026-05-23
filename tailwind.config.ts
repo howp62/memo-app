@@ -14,13 +14,12 @@ const config: Config = {
         sans: ['var(--font-noto-sans-kr)', 'Noto Sans KR', 'sans-serif'],
       },
       colors: {
-        // Apple Notes-inspired warm palette
         note: {
-          bg: '#fafaf7',
-          sidebar: '#f0efe8',
-          border: '#e2e0d6',
-          active: '#fff4c2',
-          'active-border': '#f0c040',
+          bg: '#F0F4FB',
+          sidebar: '#E4ECF8',
+          border: '#C2D3EE',
+          active: '#D5E4F7',
+          'active-border': '#244F9A',
         },
       },
       letterSpacing: {
