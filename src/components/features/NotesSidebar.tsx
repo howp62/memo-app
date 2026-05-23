@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { Button } from '@/components/ui/Button'
 import { Spinner } from '@/components/ui/Spinner'
 import { formatDate, getNotePreview } from '@/lib/utils'
@@ -13,6 +13,7 @@ interface NotesSidebarProps {
   onSelect: (note: Note) => void
   onCreate: () => void
   onSearch: (query: string) => Promise<Note[]>
+  onDelete: (id: string) => void
 }
 
 export function NotesSidebar({
@@ -22,6 +23,7 @@ export function NotesSidebar({
   onSelect,
   onCreate,
   onSearch,
+  onDelete,
 }: NotesSidebarProps) {
   const [query, setQuery] = useState('')
   const [searchResults, setSearchResults] = useState<Note[] | null>(null)
@@ -131,6 +133,7 @@ export function NotesSidebar({
                 note={note}
                 isSelected={note.id === selectedId}
                 onClick={() => onSelect(note)}
+                onDelete={onDelete}
               />
             ))}
           </ul>
@@ -140,51 +143,140 @@ export function NotesSidebar({
   )
 }
 
+const DELETE_WIDTH = 76
+
 function NoteItem({
   note,
   isSelected,
   onClick,
+  onDelete,
 }: {
   note: Note
   isSelected: boolean
   onClick: () => void
+  onDelete: (id: string) => void
 }) {
   const title = note.title || '제목 없음'
   const preview = getNotePreview(note.content)
+  const [deleteOpen, setDeleteOpen] = useState(false)
+  const touchStartX = useRef(0)
+  const touchStartY = useRef(0)
+  const containerRef = useRef<HTMLLIElement>(null)
+
+  // Close swipe when note changes or is selected
+  useEffect(() => {
+    setDeleteOpen(false)
+  }, [note.id, isSelected])
+
+  // Close on outside touch
+  useEffect(() => {
+    if (!deleteOpen) return
+    const handleOutside = (e: TouchEvent) => {
+      if (containerRef.current && !containerRef.current.contains(e.target as Node)) {
+        setDeleteOpen(false)
+      }
+    }
+    document.addEventListener('touchstart', handleOutside, { passive: true })
+    return () => document.removeEventListener('touchstart', handleOutside)
+  }, [deleteOpen])
+
+  const handleTouchStart = (e: React.TouchEvent) => {
+    touchStartX.current = e.touches[0].clientX
+    touchStartY.current = e.touches[0].clientY
+  }
+
+  const handleTouchEnd = (e: React.TouchEvent) => {
+    const dx = touchStartX.current - e.changedTouches[0].clientX
+    const dy = Math.abs(e.changedTouches[0].clientY - touchStartY.current)
+    if (dy > 40) return  // vertical scroll, ignore
+    if (dx > 50) setDeleteOpen(true)
+    else if (dx < -20) setDeleteOpen(false)
+  }
+
+  const handleMainClick = () => {
+    if (deleteOpen) {
+      setDeleteOpen(false)
+    } else {
+      onClick()
+    }
+  }
+
+  const handleDelete = (e: React.MouseEvent) => {
+    e.stopPropagation()
+    setDeleteOpen(false)
+    onDelete(note.id)
+  }
 
   return (
-    <li>
-      <button
-        onClick={onClick}
-        className={`w-full text-left px-3 py-2.5 border-b border-note-border/50 dark:border-zinc-700/50 transition-colors ${
-          isSelected
-            ? 'bg-note-active dark:bg-amber-900/30 border-l-2 border-l-note-active-border'
-            : 'hover:bg-white/50 dark:hover:bg-zinc-700/50'
+    <li ref={containerRef} className="relative overflow-hidden group">
+      {/* Delete button revealed by swipe (mobile) */}
+      <div
+        className="absolute right-0 inset-y-0 bg-red-500 flex items-center justify-center"
+        style={{ width: DELETE_WIDTH }}
+      >
+        <button
+          onClick={handleDelete}
+          className="text-white text-sm font-medium tracking-korean w-full h-full active:bg-red-600 transition-colors"
+        >
+          삭제
+        </button>
+      </div>
+
+      {/* Sliding content wrapper */}
+      <div
+        onTouchStart={handleTouchStart}
+        onTouchEnd={handleTouchEnd}
+        style={{
+          transform: deleteOpen ? `translateX(-${DELETE_WIDTH}px)` : 'translateX(0)',
+          transition: 'transform 0.22s ease',
+        }}
+        className={`flex items-stretch bg-white dark:bg-zinc-900 border-b border-note-border/50 dark:border-zinc-700/50 ${
+          isSelected ? 'border-l-2 border-l-note-active-border bg-note-active dark:bg-amber-900/30' : ''
         }`}
       >
-        <p className="text-[15px] md:text-sm font-medium text-stone-800 dark:text-zinc-100 truncate tracking-korean leading-snug">
-          {title}
-        </p>
-        <div className="flex items-baseline gap-1.5 mt-0.5">
-          <span className="text-[13px] md:text-xs text-stone-400 dark:text-zinc-500 shrink-0">
-            {formatDate(note.updated_at)}
-          </span>
-          {preview && (
-            <span className="text-[13px] md:text-xs text-stone-500 dark:text-zinc-400 truncate tracking-korean">
-              {preview}
+        {/* Main tap area */}
+        <button
+          onClick={handleMainClick}
+          className={`flex-1 min-w-0 text-left px-3 py-2.5 transition-colors ${
+            !isSelected ? 'hover:bg-stone-50 dark:hover:bg-zinc-800' : ''
+          }`}
+        >
+          <p className="text-[15px] md:text-sm font-medium text-stone-800 dark:text-zinc-100 truncate tracking-korean leading-snug">
+            {title}
+          </p>
+          <div className="flex items-baseline gap-1.5 mt-0.5">
+            <span className="text-[13px] md:text-xs text-stone-400 dark:text-zinc-500 shrink-0">
+              {formatDate(note.updated_at)}
             </span>
-          )}
-        </div>
-        {note.attachments && note.attachments.length > 0 && (
-          <div className="flex items-center gap-1 mt-1">
-            <svg className="w-3 h-3 text-stone-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
-                d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13" />
-            </svg>
-            <span className="text-xs text-stone-400">{note.attachments.length}개</span>
+            {preview && (
+              <span className="text-[13px] md:text-xs text-stone-500 dark:text-zinc-400 truncate tracking-korean">
+                {preview}
+              </span>
+            )}
           </div>
-        )}
-      </button>
+          {note.attachments && note.attachments.length > 0 && (
+            <div className="flex items-center gap-1 mt-1">
+              <svg className="w-3 h-3 text-stone-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
+                  d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13" />
+              </svg>
+              <span className="text-xs text-stone-400">{note.attachments.length}개</span>
+            </div>
+          )}
+        </button>
+
+        {/* Desktop hover delete button */}
+        <button
+          onClick={handleDelete}
+          className="hidden md:group-hover:flex items-center justify-center w-9 shrink-0 text-stone-300 hover:text-red-500 transition-colors"
+          title="삭제"
+        >
+          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
+              d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+          </svg>
+        </button>
+      </div>
     </li>
   )
 }

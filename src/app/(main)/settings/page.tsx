@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/Button'
 import { Input } from '@/components/ui/Input'
 import { useAuth } from '@/hooks/useAuth'
 import { useTheme } from '@/components/providers/ThemeProvider'
+import { usePWAInstall } from '@/hooks/usePWAInstall'
 import { supabase } from '@/lib/supabase'
 import type { ThemeMode } from '@/types'
 
@@ -18,6 +19,7 @@ const themeLabels: Record<ThemeMode, string> = {
 export default function SettingsPage() {
   const { user, signOut } = useAuth()
   const { theme, setTheme } = useTheme()
+  const { canInstall, isInstalled, install } = usePWAInstall()
   const router = useRouter()
 
   const [newPassword, setNewPassword] = useState('')
@@ -158,6 +160,32 @@ export default function SettingsPage() {
             </Button>
           </form>
         </section>
+
+        {/* PWA Install */}
+        {(canInstall || isInstalled) && (
+          <section className="bg-white dark:bg-zinc-800 rounded-xl border border-note-border dark:border-zinc-700 overflow-hidden">
+            <div className="px-4 py-3 border-b border-note-border dark:border-zinc-700">
+              <p className="text-xs font-semibold text-stone-500 dark:text-zinc-400 uppercase tracking-wider">
+                앱 설치
+              </p>
+            </div>
+            <div className="p-4">
+              {isInstalled ? (
+                <p className="text-sm text-stone-500 dark:text-zinc-400 tracking-korean">
+                  앱이 설치되어 있습니다
+                </p>
+              ) : (
+                <Button
+                  variant="primary"
+                  onClick={install}
+                  className="w-full tracking-korean"
+                >
+                  홈 화면에 추가
+                </Button>
+              )}
+            </div>
+          </section>
+        )}
 
         {/* Sign out */}
         <section className="bg-white dark:bg-zinc-800 rounded-xl border border-note-border dark:border-zinc-700 overflow-hidden">

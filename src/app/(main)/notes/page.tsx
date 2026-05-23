@@ -37,11 +37,21 @@ export default function NotesPage() {
     await updateNote(id, updates)
   }, [updateNote])
 
+  // Editor delete (always deselects)
   const handleDelete = useCallback(async (id: string) => {
     await deleteNote(id)
     setSelectedNoteId(null)
     setMobileView('list')
   }, [deleteNote])
+
+  // Sidebar delete (only deselects if deleting the selected note)
+  const handleSidebarDelete = useCallback(async (id: string) => {
+    await deleteNote(id)
+    if (selectedNoteId === id) {
+      setSelectedNoteId(null)
+      setMobileView('list')
+    }
+  }, [deleteNote, selectedNoteId])
 
   const handleSignOut = async () => {
     await signOut()
@@ -115,6 +125,7 @@ export default function NotesPage() {
           onSelect={handleSelect}
           onCreate={handleCreate}
           onSearch={searchNotes}
+          onDelete={handleSidebarDelete}
         />
       </div>
 
