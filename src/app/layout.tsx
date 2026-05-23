@@ -46,6 +46,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     <html lang="ko" suppressHydrationWarning className={notoSansKr.variable}>
       <head>
         <link rel="apple-touch-icon" href="/icons/icon-192.png" />
+        <meta name="apple-mobile-web-app-title" content="howpmemo" />
       </head>
       <body className="font-sans antialiased">
         <ThemeProvider>
