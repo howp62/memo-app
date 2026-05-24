@@ -64,11 +64,11 @@ export function NoteEditor({ note, userId, onUpdate, onDelete, onBack }: NoteEdi
     onSave: onUpdate,
   })
 
-  // Sync editor when selected note changes or receives external updates
+  // Sync editor when switching to a different note
   useEffect(() => {
     if (note) {
-      setTitle(prev => prev !== note.title ? note.title : prev)
-      setContent(prev => prev !== note.content ? note.content : prev)
+      setTitle(note.title)
+      setContent(note.content)
       setAttachments(note.attachments || [])
     } else {
       setTitle('')
@@ -76,7 +76,7 @@ export function NoteEditor({ note, userId, onUpdate, onDelete, onBack }: NoteEdi
       setAttachments([])
     }
     setIsEditingContent(false)
-  }, [note?.id, note?.title, note?.content]) // eslint-disable-line react-hooks/exhaustive-deps
+  }, [note?.id]) // eslint-disable-line react-hooks/exhaustive-deps
 
   // Focus textarea when switching to edit mode
   useEffect(() => {
