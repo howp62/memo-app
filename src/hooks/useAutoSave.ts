@@ -14,12 +14,14 @@ interface AutoSaveOptions {
 export function useAutoSave({ noteId, title, content, onSave, delay = 1000 }: AutoSaveOptions) {
   const [saveStatus, setSaveStatus] = useState<SaveStatus>('idle')
   const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
-  const isFirstRender = useRef(true)
+  const prevNoteId = useRef<string | null>(null)
 
   useEffect(() => {
-    // Skip save on first render (avoid saving when note is first selected)
-    if (isFirstRender.current) {
-      isFirstRender.current = false
+    // Skip save when note switches — just update the tracked id
+    if (noteId !== prevNoteId.current) {
+      prevNoteId.current = noteId
+      setSaveStatus('idle')
+      if (timerRef.current) clearTimeout(timerRef.current)
       return
     }
 
@@ -33,7 +35,6 @@ export function useAutoSave({ noteId, title, content, onSave, delay = 1000 }: Au
       try {
         await onSave(noteId, { title, content })
         setSaveStatus('saved')
-        // Reset to idle after 2 seconds
         setTimeout(() => setSaveStatus('idle'), 2000)
       } catch {
         setSaveStatus('error')
@@ -44,12 +45,6 @@ export function useAutoSave({ noteId, title, content, onSave, delay = 1000 }: Au
       if (timerRef.current) clearTimeout(timerRef.current)
     }
   }, [noteId, title, content]) // eslint-disable-line react-hooks/exhaustive-deps
-
-  // Reset first-render flag when note changes
-  useEffect(() => {
-    isFirstRender.current = true
-    setSaveStatus('idle')
-  }, [noteId])
 
   const saveStatusText: Record<SaveStatus, string> = {
     idle: '',

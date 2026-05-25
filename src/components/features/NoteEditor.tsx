@@ -205,7 +205,7 @@ export function NoteEditor({ note, userId, onUpdate, onDelete, onBack }: NoteEdi
             ref={contentRef}
             value={content}
             onChange={e => { setContent(e.target.value); resizeTextarea() }}
-            onBlur={() => setIsEditingContent(false)}
+            onKeyDown={e => { if (e.key === 'Escape') { setIsEditingContent(false); e.currentTarget.blur() } }}
             placeholder="내용을 입력하세요..."
             className="w-full min-h-[200px] text-[17px] md:text-[15px] text-stone-800 dark:text-zinc-200 bg-transparent border-none outline-none resize-none placeholder:text-stone-300 dark:placeholder:text-zinc-600 tracking-korean leading-korean"
           />
